@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/*this is a test comment*/
 package com.google.ar.core.examples.java.helloar;
 
 import android.content.DialogInterface;
