@@ -1,20 +1,8 @@
-/*
- * Copyright 2017 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/*this is a test comment*/
 package com.google.ar.core.examples.java.helloar;
+
+/*###############################################
+ ########### I M P O R T S ######################
+ ################################################*/
 
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -82,20 +70,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * This is a simple example that shows how to create an augmented reality (AR) application using the
- * ARCore API. The application will display any detected planes and will allow the user to tap on a
- * plane to place a 3D model.
- */
+/*###############################################
+ ########### M A I N  C L A S S #################
+ ################################################*/
 public class HelloArActivity extends AppCompatActivity implements SampleRender.Renderer {
+
+  /*###############################################
+    ### V A R I A B L E S  &  C O N S T A N T S ###
+    ################################################*/
 
   private static final String TAG = HelloArActivity.class.getSimpleName();
 
   private static final String SEARCHING_PLANE_MESSAGE = "Searching for surfaces...";
   private static final String WAITING_FOR_TAP_MESSAGE = "Tap on a surface to place an object.";
 
-  // See the definition of updateSphericalHarmonicsCoefficients for an explanation of these
-  // constants.
+  // See the definition of updateSphericalHarmonicsCoefficients for an explanation of these [TBD]
+  // constants. [TBD]
   private static final float[] sphericalHarmonicFactors = {
     0.282095f,
     -0.325735f,
@@ -114,7 +104,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
   private static final int CUBEMAP_RESOLUTION = 16;
   private static final int CUBEMAP_NUMBER_OF_IMPORTANCE_SAMPLES = 32;
 
-  // Rendering. The Renderers are created here, and initialized when the GL surface is created.
+  // [TBD]Rendering. The Renderers are created here, and initialized when the GL surface is created.
   private GLSurfaceView surfaceView;
 
   private boolean installRequested;
@@ -136,24 +126,24 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
 
   private final InstantPlacementSettings instantPlacementSettings = new InstantPlacementSettings();
   private boolean[] instantPlacementSettingsMenuDialogCheckboxes = new boolean[1];
-  // Assumed distance from the device camera to the surface on which user will try to place objects.
-  // This value affects the apparent scale of objects while the tracking method of the
-  // Instant Placement point is SCREENSPACE_WITH_APPROXIMATE_DISTANCE.
-  // Values in the [0.2, 2.0] meter range are a good choice for most AR experiences. Use lower
-  // values for AR experiences where users are expected to place objects on surfaces close to the
-  // camera. Use larger values for experiences where the user will likely be standing and trying to
-  // place an object on the ground or floor in front of them.
+  //[TBD] Assumed distance from the device camera to the surface on which user will try to place objects.[TBD]
+  // This value affects the apparent scale of objects while the tracking method of the[TBD]
+  // Instant Placement point is SCREENSPACE_WITH_APPROXIMATE_DISTANCE.[TBD]
+  // Values in the [0.2, 2.0] meter range are a good choice for most AR experiences. Use lower[TBD]
+  // values for AR experiences where users are expected to place objects on surfaces close to the[TBD]
+  // camera. Use larger values for experiences where the user will likely be standing and trying to[TBD]
+  // place an object on the ground or floor in front of them.[TBD]
   private static final float APPROXIMATE_DISTANCE_METERS = 2.0f;
 
-  // Point Cloud
+  // [TBD]Point Cloud
   private VertexBuffer pointCloudVertexBuffer;
   private Mesh pointCloudMesh;
   private Shader pointCloudShader;
-  // Keep track of the last point cloud rendered to avoid updating the VBO if point cloud
-  // was not changed.  Do this using the timestamp since we can't compare PointCloud objects.
+  // Keep track of the last point cloud rendered to avoid updating the VBO if point cloud [TBD]
+  // was not changed.  Do this using the timestamp since we can't compare PointCloud objects. [TBD]
   private long lastPointCloudTimestamp = 0;
 
-  // Virtual object (ARCore pawn)
+  // Virtual object (ARCore pawn) [TBD]
   private Mesh virtualObjectMesh;
   private Shader virtualObjectShader;
   private Texture virtualObjectAlbedoTexture;
@@ -161,20 +151,20 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
 
   private final List<WrappedAnchor> wrappedAnchors = new ArrayList<>();
 
-  // Environmental HDR
+  // Environmental HDR [TBD]
   private Texture dfgTexture;
   private SpecularCubemapFilter cubemapFilter;
 
-  // Temporary matrix allocated here to reduce number of allocations for each frame.
+  // Temporary matrix allocated here to reduce number of allocations for each frame. [TBD]
   private final float[] modelMatrix = new float[16];
   private final float[] viewMatrix = new float[16];
   private final float[] projectionMatrix = new float[16];
-  private final float[] modelViewMatrix = new float[16]; // view x model
-  private final float[] modelViewProjectionMatrix = new float[16]; // projection x view x model
+  private final float[] modelViewMatrix = new float[16]; // view x model [TBD]
+  private final float[] modelViewProjectionMatrix = new float[16]; // projection x view x model[TBD]
   private final float[] sphericalHarmonicsCoefficients = new float[9 * 3];
   private final float[] viewInverseMatrix = new float[16];
   private final float[] worldLightDirection = {0.0f, 0.0f, 0.0f, 0.0f};
-  private final float[] viewLightDirection = new float[4]; // view x world light direction
+  private final float[] viewLightDirection = new float[4]; // view x world light direction[TBD]
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -183,11 +173,11 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     surfaceView = findViewById(R.id.surfaceview);
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
 
-    // Set up touch listener.
+    // Set up touch listener. [TBD]
     tapHelper = new TapHelper(/*context=*/ this);
     surfaceView.setOnTouchListener(tapHelper);
 
-    // Set up renderer.
+    // Set up renderer. [TBD]
     render = new SampleRender(surfaceView, this, getAssets());
 
     installRequested = false;
@@ -207,7 +197,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         });
   }
 
-  /** Menu button to launch feature specific settings. */
+  /** Menu button to launch feature specific settings.[TBD] */
   protected boolean settingsMenuClick(MenuItem item) {
     if (item.getItemId() == R.id.depth_settings) {
       launchDepthSettingsMenuDialog();
@@ -219,13 +209,17 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     return false;
   }
 
+  /*###############################################
+  ########## M E T H O D S ########################
+  #################################################*/
+
   @Override
   protected void onDestroy() {
     if (session != null) {
-      // Explicitly close ARCore Session to release native resources.
-      // Review the API reference for important considerations before calling close() in apps with
-      // more complicated lifecycle requirements:
-      // https://developers.google.com/ar/reference/java/arcore/reference/com/google/ar/core/Session#close()
+      // Explicitly close ARCore Session to release native resources. [TBD]
+      // Review the API reference for important considerations before calling close() in apps with [TBD]
+      // more complicated lifecycle requirements: [TBD]
+      // https://developers.google.com/ar/reference/java/arcore/reference/com/google/ar/core/Session#close() [TBD]
       session.close();
       session = null;
     }
@@ -249,14 +243,14 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
             break;
         }
 
-        // ARCore requires camera permissions to operate. If we did not yet obtain runtime
-        // permission on Android M and above, now is a good time to ask the user for it.
+        // ARCore requires camera permissions to operate. If we did not yet obtain runtime [TBD]
+        // permission on Android M and above, now is a good time to ask the user for it. [TBD]
         if (!CameraPermissionHelper.hasCameraPermission(this)) {
           CameraPermissionHelper.requestCameraPermission(this);
           return;
         }
 
-        // Create the session.
+        // Create the session. [TBD]
         session = new Session(/* context= */ this);
       } catch (UnavailableArcoreNotInstalledException
           | UnavailableUserDeclinedInstallationException e) {
@@ -283,15 +277,15 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       }
     }
 
-    // Note that order matters - see the note in onPause(), the reverse applies here.
+    // Note that order matters - see the note in onPause(), the reverse applies here. [TBD]
     try {
       configureSession();
-      // To record a live camera session for later playback, call
-      // `session.startRecording(recordingConfig)` at anytime. To playback a previously recorded AR
-      // session instead of using the live camera feed, call
-      // `session.setPlaybackDatasetUri(Uri)` before calling `session.resume()`. To
-      // learn more about recording and playback, see:
-      // https://developers.google.com/ar/develop/java/recording-and-playback
+      // To record a live camera session for later playback, call [TBD]
+      // [TBD]`session.startRecording(recordingConfig)` at anytime. To playback a previously recorded AR
+      // session instead of using the live camera feed, call[TBD]
+      // `session.setPlaybackDatasetUri(Uri)` before calling `session.resume()`. To [TBD]
+      // learn more about recording and playback, see: [TBD]
+      // https://developers.google.com/ar/develop/java/recording-and-playback [TBD]
       session.resume();
     } catch (CameraNotAvailableException e) {
       messageSnackbarHelper.showError(this, "Camera not available. Try restarting the app.");
@@ -307,9 +301,9 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
   public void onPause() {
     super.onPause();
     if (session != null) {
-      // Note that the order matters - GLSurfaceView is paused first so that it does not try
-      // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may
-      // still call session.update() and get a SessionPausedException.
+      // Note that the order matters - GLSurfaceView is paused first so that it does not try [TBD]
+      // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may [TBD]
+      // still call session.update() and get a SessionPausedException.[TBD]
       displayRotationHelper.onPause();
       surfaceView.onPause();
       session.pause();
@@ -320,11 +314,11 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
     super.onRequestPermissionsResult(requestCode, permissions, results);
     if (!CameraPermissionHelper.hasCameraPermission(this)) {
-      // Use toast instead of snackbar here since the activity will exit.
+      // Use toast instead of snackbar here since the activity will exit. [TBD]
       Toast.makeText(this, "Camera permission is needed to run this application", Toast.LENGTH_LONG)
           .show();
       if (!CameraPermissionHelper.shouldShowRequestPermissionRationale(this)) {
-        // Permission denied with checking "Do not ask again".
+        // Permission denied with checking "Do not ask again". [TBD]
         CameraPermissionHelper.launchPermissionSettings(this);
       }
       finish();
@@ -339,8 +333,8 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
 
   @Override
   public void onSurfaceCreated(SampleRender render) {
-    // Prepare the rendering objects. This involves reading shaders and 3D model files, so may throw
-    // an IOException.
+    // Prepare the rendering objects. This involves reading shaders and 3D model files, so may throw [TBD]
+    // an IOException.[TBD]
     try {
       planeRenderer = new PlaneRenderer(render);
       backgroundRenderer = new BackgroundRenderer(render);
@@ -349,14 +343,14 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       cubemapFilter =
           new SpecularCubemapFilter(
               render, CUBEMAP_RESOLUTION, CUBEMAP_NUMBER_OF_IMPORTANCE_SAMPLES);
-      // Load DFG lookup table for environmental lighting
+      // Load DFG lookup table for environmental lighting [TBD]
       dfgTexture =
           new Texture(
               render,
               Texture.Target.TEXTURE_2D,
               Texture.WrapMode.CLAMP_TO_EDGE,
               /*useMipmaps=*/ false);
-      // The dfg.raw file is a raw half-float texture with two channels.
+      // The dfg.raw file is a raw half-float texture with two channels. [TBD]
       final int dfgResolution = 64;
       final int dfgChannels = 2;
       final int halfFloatSize = 2;
@@ -381,14 +375,14 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
           buffer);
       GLError.maybeThrowGLException("Failed to populate DFG texture", "glTexImage2D");
 
-      // Point cloud
+      // Point cloud [TBD]
       pointCloudShader =
           Shader.createFromAssets(
                   render, "shaders/point_cloud.vert", "shaders/point_cloud.frag", /*defines=*/ null)
               .setVec4(
                   "u_Color", new float[] {31.0f / 255.0f, 188.0f / 255.0f, 210.0f / 255.0f, 1.0f})
               .setFloat("u_PointSize", 5.0f);
-      // four entries per vertex: X, Y, Z, confidence
+      // four entries per vertex: X, Y, Z, confidence [TBD]
       pointCloudVertexBuffer =
           new VertexBuffer(render, /*numberOfEntriesPerVertex=*/ 4, /*entries=*/ null);
       final VertexBuffer[] pointCloudVertexBuffers = {pointCloudVertexBuffer};
@@ -396,7 +390,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
           new Mesh(
               render, Mesh.PrimitiveMode.POINTS, /*indexBuffer=*/ null, pointCloudVertexBuffers);
 
-      // Virtual object to render (ARCore pawn)
+      // Virtual object to render (ARCore pawn) [TBD] [GUI]
       virtualObjectAlbedoTexture =
           Texture.createFromAsset(
               render,
@@ -451,24 +445,24 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       return;
     }
 
-    // Texture names should only be set once on a GL thread unless they change. This is done during
-    // onDrawFrame rather than onSurfaceCreated since the session is not guaranteed to have been
-    // initialized during the execution of onSurfaceCreated.
+    // [TBD]Texture names should only be set once on a GL thread unless they change. This is done during
+    //[TBD] onDrawFrame rather than onSurfaceCreated since the session is not guaranteed to have been
+    // initialized during the execution of onSurfaceCreated.[TBD]
     if (!hasSetTextureNames) {
       session.setCameraTextureNames(
           new int[] {backgroundRenderer.getCameraColorTexture().getTextureId()});
       hasSetTextureNames = true;
     }
 
-    // -- Update per-frame state
+    // -- Update per-frame state [TBD]
 
-    // Notify ARCore session that the view size changed so that the perspective matrix and
-    // the video background can be properly adjusted.
+    // Notify ARCore session that the view size changed so that the perspective matrix and[TBD]
+    // the video background can be properly adjusted.[TBD]
     displayRotationHelper.updateSessionIfNeeded(session);
 
-    // Obtain the current frame from the AR Session. When the configuration is set to
-    // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the
-    // camera framerate.
+    // Obtain the current frame from the AR Session. When the configuration is set to[TBD]
+    // UpdateMode.BLOCKING (it is by default), this will throttle the rendering to the[TBD]
+    // camera framerate.[TBD]
     Frame frame;
     try {
       frame = session.update();
@@ -479,7 +473,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     }
     Camera camera = frame.getCamera();
 
-    // Update BackgroundRenderer state to match the depth settings.
+    // Update BackgroundRenderer state to match the depth settings. [TBD]
     try {
       backgroundRenderer.setUseDepthVisualization(
           render, depthSettings.depthColorVisualizationEnabled());
@@ -489,8 +483,8 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       messageSnackbarHelper.showError(this, "Failed to read a required asset file: " + e);
       return;
     }
-    // BackgroundRenderer.updateDisplayGeometry must be called every frame to update the coordinates
-    // used to draw the background camera image.
+    // [TBD]BackgroundRenderer.updateDisplayGeometry must be called every frame to update the coordinates
+    //[TBD] used to draw the background camera image.
     backgroundRenderer.updateDisplayGeometry(frame);
 
     if (camera.getTrackingState() == TrackingState.TRACKING
@@ -499,19 +493,19 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       try (Image depthImage = frame.acquireDepthImage16Bits()) {
         backgroundRenderer.updateCameraDepthTexture(depthImage);
       } catch (NotYetAvailableException e) {
-        // This normally means that depth data is not available yet. This is normal so we will not
-        // spam the logcat with this.
+        // [TBD]This normally means that depth data is not available yet. This is normal so we will not
+        // spam the logcat with this.[TBD]
       }
     }
 
-    // Handle one tap per frame.
+    // Handle one tap per frame.[TBD]
     handleTap(frame, camera);
 
-    // Keep the screen unlocked while tracking, but allow it to lock when tracking stops.
+    // Keep the screen unlocked while tracking, but allow it to lock when tracking stops.[TBD]
     trackingStateHelper.updateKeepScreenOnFlag(camera.getTrackingState());
 
-    // Show a message based on whether tracking has failed, if planes are detected, and if the user
-    // has placed any objects.
+    // [TBD]Show a message based on whether tracking has failed, if planes are detected, and if the user
+    // has placed any objects.[TBD]
     String message = null;
     if (camera.getTrackingState() == TrackingState.PAUSED) {
       if (camera.getTrackingFailureReason() == TrackingFailureReason.NONE) {
@@ -532,29 +526,29 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       messageSnackbarHelper.showMessage(this, message);
     }
 
-    // -- Draw background
+    // -- Draw background [TBD]
 
     if (frame.getTimestamp() != 0) {
-      // Suppress rendering if the camera did not produce the first frame yet. This is to avoid
-      // drawing possible leftover data from previous sessions if the texture is reused.
+      // [TBD] Suppress rendering if the camera did not produce the first frame yet. This is to avoid
+      // [TBD] drawing possible leftover data from previous sessions if the texture is reused.
       backgroundRenderer.drawBackground(render);
     }
 
-    // If not tracking, don't draw 3D objects.
+    // [TBD] If not tracking, don't draw 3D objects.
     if (camera.getTrackingState() == TrackingState.PAUSED) {
       return;
     }
 
-    // -- Draw non-occluded virtual objects (planes, point cloud)
+    // [TBD] -- Draw non-occluded virtual objects (planes, point cloud)
 
-    // Get projection matrix.
+    //[TBD]  Get projection matrix.
     camera.getProjectionMatrix(projectionMatrix, 0, Z_NEAR, Z_FAR);
 
-    // Get camera matrix and draw.
+    //[TBD] Get camera matrix and draw.
     camera.getViewMatrix(viewMatrix, 0);
 
-    // Visualize tracked points.
-    // Use try-with-resources to automatically release the point cloud.
+    //[TBD] Visualize tracked points.
+    //[TBD] Use try-with-resources to automatically release the point cloud.
     try (PointCloud pointCloud = frame.acquirePointCloud()) {
       if (pointCloud.getTimestamp() > lastPointCloudTimestamp) {
         pointCloudVertexBuffer.set(pointCloud.getPoints());
@@ -565,19 +559,19 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       render.draw(pointCloudMesh, pointCloudShader);
     }
 
-    // Visualize planes.
+    // Visualize planes.[TBD]
     planeRenderer.drawPlanes(
         render,
         session.getAllTrackables(Plane.class),
         camera.getDisplayOrientedPose(),
         projectionMatrix);
 
-    // -- Draw occluded virtual objects
+    // -- Draw occluded virtual objects [TBD]
 
-    // Update lighting parameters in the shader
+    // Update lighting parameters in the shader [TBD]
     updateLightEstimation(frame.getLightEstimate(), viewMatrix);
 
-    // Visualize anchors created by touch.
+    // Visualize anchors created by touch. [TBD]
     render.clear(virtualSceneFramebuffer, 0f, 0f, 0f, 0f);
     for (WrappedAnchor wrappedAnchor : wrappedAnchors) {
       Anchor anchor = wrappedAnchor.getAnchor();
@@ -586,15 +580,15 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         continue;
       }
 
-      // Get the current pose of an Anchor in world space. The Anchor pose is updated
-      // during calls to session.update() as ARCore refines its estimate of the world.
+      // Get the current pose of an Anchor in world space. The Anchor pose is updated [TBD]
+      // during calls to session.update() as ARCore refines its estimate of the world. [TBD]
       anchor.getPose().toMatrix(modelMatrix, 0);
 
-      // Calculate model/view/projection matrices
+      // Calculate model/view/projection matrices [TBD]
       Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0);
       Matrix.multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0, modelViewMatrix, 0);
 
-      // Update shader properties and draw
+      // Update shader properties and draw [TBD]
       virtualObjectShader.setMat4("u_ModelView", modelViewMatrix);
       virtualObjectShader.setMat4("u_ModelViewProjection", modelViewProjectionMatrix);
 
@@ -610,11 +604,11 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       render.draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer);
     }
 
-    // Compose the virtual scene with the background.
+    // Compose the virtual scene with the background. [TBD]
     backgroundRenderer.drawVirtualScene(render, virtualSceneFramebuffer, Z_NEAR, Z_FAR);
   }
 
-  // Handle only one tap per frame, as taps are usually low frequency compared to frame rate.
+  // Handle only one tap per frame, as taps are usually low frequency compared to frame rate. [TBD]
   private void handleTap(Frame frame, Camera camera) {
     MotionEvent tap = tapHelper.poll();
     if (tap != null && camera.getTrackingState() == TrackingState.TRACKING) {
@@ -626,10 +620,10 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         hitResultList = frame.hitTest(tap);
       }
       for (HitResult hit : hitResultList) {
-        // If any plane, Oriented Point, or Instant Placement Point was hit, create an anchor.
+        // If any plane, Oriented Point, or Instant Placement Point was hit, create an anchor. [TBD]
         Trackable trackable = hit.getTrackable();
-        // If a plane was hit, check that it was hit inside the plane polygon.
-        // DepthPoints are only returned if Config.DepthMode is set to AUTOMATIC.
+        // If a plane was hit, check that it was hit inside the plane polygon. [TBD]
+        // DepthPoints are only returned if Config.DepthMode is set to AUTOMATIC. [TBD]
         if ((trackable instanceof Plane
                 && ((Plane) trackable).isPoseInPolygon(hit.getHitPose())
                 && (PlaneRenderer.calculateDistanceToPlane(hit.getHitPose(), camera.getPose()) > 0))
@@ -638,40 +632,40 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
                     == OrientationMode.ESTIMATED_SURFACE_NORMAL)
             || (trackable instanceof InstantPlacementPoint)
             || (trackable instanceof DepthPoint)) {
-          // Cap the number of objects created. This avoids overloading both the
-          // rendering system and ARCore.
+          // Cap the number of objects created. This avoids overloading both the [TBD]
+          // rendering system and ARCore. [TBD]
           if (wrappedAnchors.size() >= 20) {
             wrappedAnchors.get(0).getAnchor().detach();
             wrappedAnchors.remove(0);
           }
 
-          // Adding an Anchor tells ARCore that it should track this position in
+          // [TBD]Adding an Anchor tells ARCore that it should track this position in
           // space. This anchor is created on the Plane to place the 3D model
-          // in the correct position relative both to the world and to the plane.
+          // in the correct position relative both to the world and to the plane.[TBD]
           wrappedAnchors.add(new WrappedAnchor(hit.createAnchor(), trackable));
-          // For devices that support the Depth API, shows a dialog to suggest enabling
-          // depth-based occlusion. This dialog needs to be spawned on the UI thread.
+          // [TBD]For devices that support the Depth API, shows a dialog to suggest enabling
+          // depth-based occlusion. This dialog needs to be spawned on the UI thread.[TBD]
           this.runOnUiThread(this::showOcclusionDialogIfNeeded);
 
-          // Hits are sorted by depth. Consider only closest hit on a plane, Oriented Point, or
-          // Instant Placement Point.
+          // [TBD]Hits are sorted by depth. Consider only closest hit on a plane, Oriented Point, or
+          // Instant Placement Point.[TBD]
           break;
         }
       }
     }
   }
 
-  /**
+  /**[TBD]
    * Shows a pop-up dialog on the first call, determining whether the user wants to enable
    * depth-based occlusion. The result of this dialog can be retrieved with useDepthForOcclusion().
-   */
+   [TBD]*/
   private void showOcclusionDialogIfNeeded() {
     boolean isDepthSupported = session.isDepthModeSupported(Config.DepthMode.AUTOMATIC);
     if (!depthSettings.shouldShowDepthEnableDialog() || !isDepthSupported) {
-      return; // Don't need to show dialog.
+      return; // Don't need to show dialog.[TBD]
     }
 
-    // Asks the user whether they want to use depth-based occlusion.
+    // Asks the user whether they want to use depth-based occlusion. [TBD]
     new AlertDialog.Builder(this)
         .setTitle(R.string.options_title_with_depth)
         .setMessage(R.string.depth_use_explanation)
@@ -707,15 +701,15 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         .show();
   }
 
-  /** Shows checkboxes to the user to facilitate toggling of depth-based effects. */
+  /** Shows checkboxes to the user to facilitate toggling of depth-based effects. [TBD]*/
   private void launchDepthSettingsMenuDialog() {
-    // Retrieves the current settings to show in the checkboxes.
+    // Retrieves the current settings to show in the checkboxes. [TBD]
     resetSettingsMenuDialogCheckboxes();
 
-    // Shows the dialog to the user.
+    // Shows the dialog to the user. [TBD]
     Resources resources = getResources();
     if (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
-      // With depth support, the user can select visualization options.
+      // With depth support, the user can select visualization options. [TBD]
       new AlertDialog.Builder(this)
           .setTitle(R.string.options_title_with_depth)
           .setMultiChoiceItems(
@@ -731,7 +725,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
               (DialogInterface dialog, int which) -> resetSettingsMenuDialogCheckboxes())
           .show();
     } else {
-      // Without depth support, no settings are available.
+      // Without depth support, no settings are available. [TBD]
       new AlertDialog.Builder(this)
           .setTitle(R.string.options_title_without_depth)
           .setPositiveButton(
@@ -756,7 +750,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         instantPlacementSettings.isInstantPlacementEnabled();
   }
 
-  /** Checks if we detected at least one plane. */
+  /** Checks if we detected at least one plane.[TBD] */
   private boolean hasTrackingPlane() {
     for (Plane plane : session.getAllTrackables(Plane.class)) {
       if (plane.getTrackingState() == TrackingState.TRACKING) {
@@ -766,7 +760,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     return false;
   }
 
-  /** Update state based on the current frame's light estimation. */
+  /** Update state based on the current frame's light estimation.[TBD] */
   private void updateLightEstimation(LightEstimate lightEstimate, float[] viewMatrix) {
     if (lightEstimate.getState() != LightEstimate.State.VALID) {
       virtualObjectShader.setBool("u_LightEstimateIsValid", false);
@@ -787,7 +781,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
   }
 
   private void updateMainLight(float[] direction, float[] intensity, float[] viewMatrix) {
-    // We need the direction in a vec4 with 0.0 as the final component to transform it to view space
+    //[TBD] We need the direction in a vec4 with 0.0 as the final component to transform it to view space
     worldLightDirection[0] = direction[0];
     worldLightDirection[1] = direction[1];
     worldLightDirection[2] = direction[2];
@@ -799,15 +793,15 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
   private void updateSphericalHarmonicsCoefficients(float[] coefficients) {
     // Pre-multiply the spherical harmonics coefficients before passing them to the shader. The
     // constants in sphericalHarmonicFactors were derived from three terms:
-    //
+    //[TBD]
     // 1. The normalized spherical harmonics basis functions (y_lm)
-    //
+    //[TBD]
     // 2. The lambertian diffuse BRDF factor (1/pi)
-    //
+    //[TBD]
     // 3. A <cos> convolution. This is done to so that the resulting function outputs the irradiance
     // of all incoming light over a hemisphere for a given surface normal, which is what the shader
     // (environmental_hdr.frag) expects.
-    //
+    //[TBD]
     // You can read more details about the math here:
     // https://google.github.io/filament/Filament.html#annex/sphericalharmonics
 
@@ -816,7 +810,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
           "The given coefficients array must be of length 27 (3 components per 9 coefficients");
     }
 
-    // Apply each factor to every component of each coefficient
+    // Apply each factor to every component of each coefficient [TBD]
     for (int i = 0; i < 9 * 3; ++i) {
       sphericalHarmonicsCoefficients[i] = coefficients[i] * sphericalHarmonicFactors[i / 3];
     }
@@ -824,7 +818,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         "u_SphericalHarmonicsCoefficients", sphericalHarmonicsCoefficients);
   }
 
-  /** Configures the session with feature settings. */
+  /** Configures the session with feature settings. [TBD] */
   private void configureSession() {
     Config config = session.getConfig();
     config.setLightEstimationMode(Config.LightEstimationMode.ENVIRONMENTAL_HDR);
@@ -843,9 +837,14 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
 }
 
 /**
- * Associates an Anchor with the trackable it was attached to. This is used to be able to check
- * whether or not an Anchor originally was attached to an {@link InstantPlacementPoint}.
+ * [TBD]Associates an Anchor with the trackable it was attached to. This is used to be able to check
+ * whether or not an Anchor originally was attached to an {@link InstantPlacementPoint}.[TBD]
  */
+
+/*###############################################
+ ########### O T H E R  C L A S S E S ###########
+ ################################################*/
+
 class WrappedAnchor {
   private Anchor anchor;
   private Trackable trackable;
