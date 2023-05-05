@@ -1,6 +1,6 @@
 package com.google.ar.core.examples.java.helloar;
 
-/*###############################################
+/**##############################################
  ########### I M P O R T S ######################
  ################################################*/
 
@@ -70,22 +70,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/*###############################################
+/**##############################################
  ########### M A I N  C L A S S #################
  ################################################*/
 public class HelloArActivity extends AppCompatActivity implements SampleRender.Renderer {
 
-  /*###############################################
+  /**##############################################
     ### V A R I A B L E S  &  C O N S T A N T S ###
     ################################################*/
 
+  /** <<< Variable that gets the simple name of the class for debugging purposes >>> */
   private static final String TAG = HelloArActivity.class.getSimpleName();
 
+  /** <<< String that displays message while app is looking for valid surfaces >>> */
   private static final String SEARCHING_PLANE_MESSAGE = "Searching for surfaces...";
   private static final String WAITING_FOR_TAP_MESSAGE = "Tap on a surface to place an object.";
 
-  // See the definition of updateSphericalHarmonicsCoefficients for an explanation of these [TBD]
-  // constants. [TBD]
+  /** <<< Array of constants needed for mathematical formulas needed to create surface of spheres >>> */
   private static final float[] sphericalHarmonicFactors = {
     0.282095f,
     -0.325735f,
@@ -98,13 +99,15 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     0.136569f,
   };
 
+  /** <<< Floats representing nearest and farthest object placing distance >>> */
   private static final float Z_NEAR = 0.1f;
   private static final float Z_FAR = 100f;
 
+  /** <<< Cubemap relevant values >>> */
   private static final int CUBEMAP_RESOLUTION = 16;
   private static final int CUBEMAP_NUMBER_OF_IMPORTANCE_SAMPLES = 32;
 
-  // [TBD]Rendering. The Renderers are created here, and initialized when the GL surface is created.
+  /** <<< Variables needed for renders,sessions and the overall functionality of the app >>> */
   private GLSurfaceView surfaceView;
 
   private boolean installRequested;
@@ -126,45 +129,60 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
 
   private final InstantPlacementSettings instantPlacementSettings = new InstantPlacementSettings();
   private boolean[] instantPlacementSettingsMenuDialogCheckboxes = new boolean[1];
-  //[TBD] Assumed distance from the device camera to the surface on which user will try to place objects.[TBD]
-  // This value affects the apparent scale of objects while the tracking method of the[TBD]
-  // Instant Placement point is SCREENSPACE_WITH_APPROXIMATE_DISTANCE.[TBD]
-  // Values in the [0.2, 2.0] meter range are a good choice for most AR experiences. Use lower[TBD]
-  // values for AR experiences where users are expected to place objects on surfaces close to the[TBD]
-  // camera. Use larger values for experiences where the user will likely be standing and trying to[TBD]
-  // place an object on the ground or floor in front of them.[TBD]
+
+
+  /** <<< Distance (approximate) between camera and object used to help with object scaling >>> */
   private static final float APPROXIMATE_DISTANCE_METERS = 2.0f;
 
-  // [TBD]Point Cloud
+  /** <<< Variables used for point cloud to find the available surface >>> */
   private VertexBuffer pointCloudVertexBuffer;
   private Mesh pointCloudMesh;
   private Shader pointCloudShader;
-  // Keep track of the last point cloud rendered to avoid updating the VBO if point cloud [TBD]
-  // was not changed.  Do this using the timestamp since we can't compare PointCloud objects. [TBD]
+
+  /** <<< Remembering last surface point cloud stamp for efficiency reasons >>> */
   private long lastPointCloudTimestamp = 0;
 
-  // Virtual object (ARCore pawn) [TBD]
+  /** <<< 3D object variables >>> */
+
+  /** <<< This variable represents a 3D model of the virtual object, made up of vertices, edges, and faces. >>> */
   private Mesh virtualObjectMesh;
+
+  /** <<<  This variable represents the program used to render the virtual object. The shader determines the color, lighting, and other visual properties of the object >>> */
   private Shader virtualObjectShader;
+
+  /** <<< This variable represents a texture used to apply color and visual details to the virtual object >>> */
   private Texture virtualObjectAlbedoTexture;
+
+  /** <<< This variable represents a texture used specifically for instant placement of the virtual object >>> */
   private Texture virtualObjectAlbedoInstantPlacementTexture;
 
+  /** <<< Variable used for objects that track the 3D model in real life parameters >>> */
   private final List<WrappedAnchor> wrappedAnchors = new ArrayList<>();
 
-  // Environmental HDR [TBD]
+  /** <<< Variables for HDR lightning >>> */
   private Texture dfgTexture;
   private SpecularCubemapFilter cubemapFilter;
 
-  // Temporary matrix allocated here to reduce number of allocations for each frame. [TBD]
+  /* <<< Temporary matrix used for efficiency reasons >>> */
   private final float[] modelMatrix = new float[16];
   private final float[] viewMatrix = new float[16];
   private final float[] projectionMatrix = new float[16];
-  private final float[] modelViewMatrix = new float[16]; // view x model [TBD]
-  private final float[] modelViewProjectionMatrix = new float[16]; // projection x view x model[TBD]
+
+  /** <<< Variables used to store the result of multiplying the modelMatrix and viewMatrix together >>> */
+  private final float[] modelViewMatrix = new float[16];
+
+  /** <<< Variables used to store the result of multiplying the modelMatrix, viewMatrix, and projectionMatrix together >>> */
+  private final float[] modelViewProjectionMatrix = new float[16];
   private final float[] sphericalHarmonicsCoefficients = new float[9 * 3];
   private final float[] viewInverseMatrix = new float[16];
   private final float[] worldLightDirection = {0.0f, 0.0f, 0.0f, 0.0f};
-  private final float[] viewLightDirection = new float[4]; // view x world light direction[TBD]
+
+  /** <<< Variables used to store the result of multiplying the viewMatrix and worldLightDirection together >>> */
+  private final float[] viewLightDirection = new float[4];
+
+  /**################################################
+   ########## M E T H O D S #########################
+   #################################################*/
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -208,10 +226,6 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     }
     return false;
   }
-
-  /*###############################################
-  ########## M E T H O D S ########################
-  #################################################*/
 
   @Override
   protected void onDestroy() {
@@ -841,7 +855,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
  * whether or not an Anchor originally was attached to an {@link InstantPlacementPoint}.[TBD]
  */
 
-/*###############################################
+/**##############################################
  ########### O T H E R  C L A S S E S ###########
  ################################################*/
 
