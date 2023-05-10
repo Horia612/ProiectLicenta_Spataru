@@ -187,27 +187,31 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    /** <<< Sets the layout of the activity to activity_main.xml >>> */
     setContentView(R.layout.activity_main);
     surfaceView = findViewById(R.id.surfaceview);
+    /** <<< Creates a new DisplayRotationHelper object and assigns it to the displayRotationHelper variable. >>> */
     displayRotationHelper = new DisplayRotationHelper(/*context=*/ this);
 
-    // Set up touch listener. [TBD]
+    /** <<< Creates a new TapHelper object and assigns it to the tapHelper variable. >>> */
     tapHelper = new TapHelper(/*context=*/ this);
+    /** <<< Sets the OnTouchListener for the surfaceView object to tapHelper, which will handle touch events on the surface view. >>> */
     surfaceView.setOnTouchListener(tapHelper);
 
-    // Set up renderer. [TBD]
     render = new SampleRender(surfaceView, this, getAssets());
 
     installRequested = false;
 
     depthSettings.onCreate(this);
     instantPlacementSettings.onCreate(this);
+    /** <<< Finds the ImageButton object with the ID settings_button from the layout and assigns it to the settingsButton variable. >>> */
     ImageButton settingsButton = findViewById(R.id.settings_button);
     settingsButton.setOnClickListener(
         new View.OnClickListener() {
           @Override
           public void onClick(View v) {
             PopupMenu popup = new PopupMenu(HelloArActivity.this, v);
+            /** <<< Sets the OnMenuItemClickListener for the PopupMenu object to the settingsMenuClick method in the current activity. >>> */
             popup.setOnMenuItemClickListener(HelloArActivity.this::settingsMenuClick);
             popup.inflate(R.menu.settings_menu);
             popup.show();
@@ -215,7 +219,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         });
   }
 
-  /** Menu button to launch feature specific settings.[TBD] */
+  /** <<< This method handles the selection of items in a popup menu, launching a specific dialog depending on the selected item >>> */
   protected boolean settingsMenuClick(MenuItem item) {
     if (item.getItemId() == R.id.depth_settings) {
       launchDepthSettingsMenuDialog();
