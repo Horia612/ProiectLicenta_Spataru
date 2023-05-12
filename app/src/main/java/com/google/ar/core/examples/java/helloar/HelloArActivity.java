@@ -163,7 +163,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
   private Texture dfgTexture;
   private SpecularCubemapFilter cubemapFilter;
 
-  /* <<< Temporary matrix used for efficiency reasons >>> */
+  /** <<< Temporary matrix used for efficiency reasons >>> */
   private final float[] modelMatrix = new float[16];
   private final float[] viewMatrix = new float[16];
   private final float[] projectionMatrix = new float[16];
