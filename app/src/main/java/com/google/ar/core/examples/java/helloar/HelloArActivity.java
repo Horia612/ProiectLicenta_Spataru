@@ -231,13 +231,11 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     return false;
   }
 
+
+  /** <<< The purpose of this function is to perform cleanup operations before the Activity is destroyed, to release any resources that were allocated by an ARCore Session >>> */
   @Override
   protected void onDestroy() {
     if (session != null) {
-      // Explicitly close ARCore Session to release native resources. [TBD]
-      // Review the API reference for important considerations before calling close() in apps with [TBD]
-      // more complicated lifecycle requirements: [TBD]
-      // https://developers.google.com/ar/reference/java/arcore/reference/com/google/ar/core/Session#close() [TBD]
       session.close();
       session = null;
     }
@@ -245,6 +243,9 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     super.onDestroy();
   }
 
+
+  /** <<< The purpose of this function is to perform initialization and configuration operations necessary for the ARCore Session to work properly >>> */
+  /** <<< Checking whether the ARCore app is installed on the device, requesting camera permissions if necessary, and handling various exceptions that may occur during the initialization process >>> */
   @Override
   protected void onResume() {
     super.onResume();
@@ -260,15 +261,11 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
           case INSTALLED:
             break;
         }
-
-        // ARCore requires camera permissions to operate. If we did not yet obtain runtime [TBD]
-        // permission on Android M and above, now is a good time to ask the user for it. [TBD]
         if (!CameraPermissionHelper.hasCameraPermission(this)) {
           CameraPermissionHelper.requestCameraPermission(this);
           return;
         }
 
-        // Create the session. [TBD]
         session = new Session(/* context= */ this);
       } catch (UnavailableArcoreNotInstalledException
           | UnavailableUserDeclinedInstallationException e) {
@@ -295,15 +292,8 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       }
     }
 
-    // Note that order matters - see the note in onPause(), the reverse applies here. [TBD]
     try {
       configureSession();
-      // To record a live camera session for later playback, call [TBD]
-      // [TBD]`session.startRecording(recordingConfig)` at anytime. To playback a previously recorded AR
-      // session instead of using the live camera feed, call[TBD]
-      // `session.setPlaybackDatasetUri(Uri)` before calling `session.resume()`. To [TBD]
-      // learn more about recording and playback, see: [TBD]
-      // https://developers.google.com/ar/develop/java/recording-and-playback [TBD]
       session.resume();
     } catch (CameraNotAvailableException e) {
       messageSnackbarHelper.showError(this, "Camera not available. Try restarting the app.");
@@ -315,44 +305,45 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     displayRotationHelper.onResume();
   }
 
+
+  /** <<< The purpose of this method is to pause the AR session and related components of the application when the user navigates away from the app or when the app is no longer in the foreground >>> */
   @Override
   public void onPause() {
     super.onPause();
     if (session != null) {
-      // Note that the order matters - GLSurfaceView is paused first so that it does not try [TBD]
-      // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may [TBD]
-      // still call session.update() and get a SessionPausedException.[TBD]
       displayRotationHelper.onPause();
       surfaceView.onPause();
       session.pause();
     }
   }
 
+
+  /** <<< When the Android system will display a dialog box asking the user for camera permission,once the user has responded to the dialog, this method is called. >>> */
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
     super.onRequestPermissionsResult(requestCode, permissions, results);
     if (!CameraPermissionHelper.hasCameraPermission(this)) {
-      // Use toast instead of snackbar here since the activity will exit. [TBD]
       Toast.makeText(this, "Camera permission is needed to run this application", Toast.LENGTH_LONG)
           .show();
       if (!CameraPermissionHelper.shouldShowRequestPermissionRationale(this)) {
-        // Permission denied with checking "Do not ask again". [TBD]
         CameraPermissionHelper.launchPermissionSettings(this);
       }
       finish();
     }
   }
 
+
+  /** <<< This method is called by the Android system when the focus of the window changes >>> */
   @Override
   public void onWindowFocusChanged(boolean hasFocus) {
     super.onWindowFocusChanged(hasFocus);
     FullScreenHelper.setFullScreenOnWindowFocusChanged(this, hasFocus);
   }
 
+
+  /** <<< This method is called when the OpenGL surface is created, and it initializes various objects and resources required for rendering >>> */
   @Override
   public void onSurfaceCreated(SampleRender render) {
-    // Prepare the rendering objects. This involves reading shaders and 3D model files, so may throw [TBD]
-    // an IOException.[TBD]
     try {
       planeRenderer = new PlaneRenderer(render);
       backgroundRenderer = new BackgroundRenderer(render);
@@ -361,14 +352,14 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       cubemapFilter =
           new SpecularCubemapFilter(
               render, CUBEMAP_RESOLUTION, CUBEMAP_NUMBER_OF_IMPORTANCE_SAMPLES);
-      // Load DFG lookup table for environmental lighting [TBD]
+      /** <<< Load Distant Field of Gamma lookup table for environmental lighting >>> */
       dfgTexture =
           new Texture(
               render,
               Texture.Target.TEXTURE_2D,
               Texture.WrapMode.CLAMP_TO_EDGE,
               /*useMipmaps=*/ false);
-      // The dfg.raw file is a raw half-float texture with two channels. [TBD]
+      /** <<< The dfg.raw file is a raw half-float texture with two channels. >>> */
       final int dfgResolution = 64;
       final int dfgChannels = 2;
       final int halfFloatSize = 2;
@@ -378,7 +369,6 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       try (InputStream is = getAssets().open("models/dfg.raw")) {
         is.read(buffer.array());
       }
-      // SampleRender abstraction leaks here.
       GLES30.glBindTexture(GLES30.GL_TEXTURE_2D, dfgTexture.getTextureId());
       GLError.maybeThrowGLException("Failed to bind DFG texture", "glBindTexture");
       GLES30.glTexImage2D(
@@ -393,14 +383,14 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
           buffer);
       GLError.maybeThrowGLException("Failed to populate DFG texture", "glTexImage2D");
 
-      // Point cloud [TBD]
+      /** <<< point cloud >>> */
       pointCloudShader =
           Shader.createFromAssets(
                   render, "shaders/point_cloud.vert", "shaders/point_cloud.frag", /*defines=*/ null)
               .setVec4(
                   "u_Color", new float[] {31.0f / 255.0f, 188.0f / 255.0f, 210.0f / 255.0f, 1.0f})
               .setFloat("u_PointSize", 5.0f);
-      // four entries per vertex: X, Y, Z, confidence [TBD]
+      /** <<< four entries per vertex: X, Y, Z, confidence >>> */
       pointCloudVertexBuffer =
           new VertexBuffer(render, /*numberOfEntriesPerVertex=*/ 4, /*entries=*/ null);
       final VertexBuffer[] pointCloudVertexBuffers = {pointCloudVertexBuffer};
@@ -408,7 +398,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
           new Mesh(
               render, Mesh.PrimitiveMode.POINTS, /*indexBuffer=*/ null, pointCloudVertexBuffers);
 
-      // Virtual object to render (ARCore pawn) [TBD] [GUI]
+      /** <<< Virtual object to render (ARCore pawn) >>> */
       virtualObjectAlbedoTexture =
           Texture.createFromAsset(
               render,
@@ -451,6 +441,8 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     }
   }
 
+
+  /** <<< This method is called by the Android framework when the surface size changes, for example when the device is rotated or when the app is put into multi-window mode >>> */
   @Override
   public void onSurfaceChanged(SampleRender render, int width, int height) {
     displayRotationHelper.onSurfaceChanged(width, height);
