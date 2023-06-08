@@ -611,24 +611,9 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         virtualObjectShader.setTexture(
             "u_AlbedoTexture", virtualObjectAlbedoInstantPlacementTexture);
       } else {
-        if(planet==0){
-          try{
-            virtualObjectAlbedoTexture =
-                    Texture.createFromAsset(
-                            render,
-                            "mars/pawn_albedo.png",
-                            Texture.WrapMode.CLAMP_TO_EDGE,
-                            Texture.ColorFormat.SRGB);
-          }
-          catch (IOException e) {
-            Log.e(TAG, "Failed to read a required asset file", e);
-            messageSnackbarHelper.showError(this, "Failed to read a required asset file: " + e);
-          }
-          planet=1;
-        }
+        virtualObjectShader.setTexture("u_AlbedoTexture", virtualObjectAlbedoTexture);
+        render.draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer);
       }
-      virtualObjectShader.setTexture("u_AlbedoTexture", virtualObjectAlbedoTexture);
-      render.draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer);
     }
 
     // Compose the virtual scene with the background. [TBD]
@@ -645,6 +630,21 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
             frame.hitTestInstantPlacement(tap.getX(), tap.getY(), APPROXIMATE_DISTANCE_METERS);
       } else {
         hitResultList = frame.hitTest(tap);
+        if(planet==0){
+          try{
+            virtualObjectAlbedoTexture =
+                    Texture.createFromAsset(
+                            render,
+                            "mars/pawn_albedo.png",
+                            Texture.WrapMode.CLAMP_TO_EDGE,
+                            Texture.ColorFormat.SRGB);
+          }
+          catch (IOException e) {
+            Log.e(TAG, "Failed to read a required asset file", e);
+            messageSnackbarHelper.showError(this, "Failed to read a required asset file: " + e);
+          }
+          planet=1;
+        }
       }
       for (HitResult hit : hitResultList) {
         // If any plane, Oriented Point, or Instant Placement Point was hit, create an anchor. [TBD]
