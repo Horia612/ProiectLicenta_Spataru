@@ -80,6 +80,8 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     ### V A R I A B L E S  &  C O N S T A N T S ###
     ################################################*/
 
+  int planet=0;
+
   /** <<< Variable that gets the simple name of the class for debugging purposes >>> */
   private static final String TAG = HelloArActivity.class.getSimpleName();
 
@@ -403,7 +405,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
       virtualObjectAlbedoTexture =
           Texture.createFromAsset(
               render,
-              "mars/pawn_albedo.png",
+              "models/pawn_albedo.png",
               Texture.WrapMode.CLAMP_TO_EDGE,
               Texture.ColorFormat.SRGB);
       virtualObjectAlbedoInstantPlacementTexture =
