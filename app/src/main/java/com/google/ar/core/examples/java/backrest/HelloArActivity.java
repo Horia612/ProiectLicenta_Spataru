@@ -611,7 +611,10 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         virtualObjectShader.setTexture(
             "u_AlbedoTexture", virtualObjectAlbedoInstantPlacementTexture);
       } else {
-        virtualObjectShader.setTexture("u_AlbedoTexture", virtualObjectAlbedoTexture);
+        if(planet==0){
+          virtualObjectShader.setTexture("u_AlbedoTexture", virtualObjectAlbedoTexture);
+          planet=1;
+        }
       }
 
       render.draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer);
