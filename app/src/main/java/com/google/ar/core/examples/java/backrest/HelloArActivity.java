@@ -157,6 +157,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
   private Texture virtualObjectAlbedoTexture;
   private Texture virtualMarsAlbedoTexture;
   private Texture virtualJupiterAlbedoTexture;
+  private Texture virtualNeptunAlbedoTexture;
 
   /** <<< This variable represents a texture used specifically for instant placement of the virtual object >>> */
   private Texture virtualObjectAlbedoInstantPlacementTexture;
@@ -422,6 +423,12 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
                       "jupiter/pawn_albedo.png",
                       Texture.WrapMode.CLAMP_TO_EDGE,
                       Texture.ColorFormat.SRGB);
+      virtualNeptunAlbedoTexture =
+              Texture.createFromAsset(
+                      render,
+                      "neptun/pawn_albedo.png",
+                      Texture.WrapMode.CLAMP_TO_EDGE,
+                      Texture.ColorFormat.SRGB);
       virtualObjectAlbedoInstantPlacementTexture =
           Texture.createFromAsset(
               render,
@@ -633,8 +640,12 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
           virtualObjectShader.setTexture("u_AlbedoTexture", virtualObjectAlbedoTexture);
           planet=2;
         }
-        else{
+        else if(planet==2){
           virtualObjectShader.setTexture("u_AlbedoTexture", virtualJupiterAlbedoTexture);
+          planet=3;
+        }
+        else{
+          virtualObjectShader.setTexture("u_AlbedoTexture", virtualNeptunAlbedoTexture);
           planet=0;
         }
         render.draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer);
