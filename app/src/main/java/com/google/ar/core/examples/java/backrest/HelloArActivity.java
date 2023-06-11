@@ -155,6 +155,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
 
   /** <<< This variable represents a texture used to apply color and visual details to the virtual object >>> */
   private Texture virtualObjectAlbedoTexture;
+  private Texture virtualMarsAlbedoTexture;
 
   /** <<< This variable represents a texture used specifically for instant placement of the virtual object >>> */
   private Texture virtualObjectAlbedoInstantPlacementTexture;
@@ -408,6 +409,12 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
               "models/pawn_albedo.png",
               Texture.WrapMode.CLAMP_TO_EDGE,
               Texture.ColorFormat.SRGB);
+      virtualMarsAlbedoTexture =
+              Texture.createFromAsset(
+                      render,
+                      "mars/pawn_albedo.png",
+                      Texture.WrapMode.CLAMP_TO_EDGE,
+                      Texture.ColorFormat.SRGB);
       virtualObjectAlbedoInstantPlacementTexture =
           Texture.createFromAsset(
               render,
@@ -611,7 +618,15 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         virtualObjectShader.setTexture(
             "u_AlbedoTexture", virtualObjectAlbedoInstantPlacementTexture);
       } else {
-        virtualObjectShader.setTexture("u_AlbedoTexture", virtualObjectAlbedoTexture);
+        if(planet==0){
+          virtualObjectShader.setTexture("u_AlbedoTexture", virtualMarsAlbedoTexture);
+          planet=1;
+        }
+        else{
+          virtualObjectShader.setTexture("u_AlbedoTexture", virtualObjectAlbedoTexture);
+          planet=0;
+        }
+
         render.draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer);
       }
     }
@@ -630,21 +645,6 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
             frame.hitTestInstantPlacement(tap.getX(), tap.getY(), APPROXIMATE_DISTANCE_METERS);
       } else {
         hitResultList = frame.hitTest(tap);
-        if(planet==0){
-          try{
-            virtualObjectAlbedoTexture =
-                    Texture.createFromAsset(
-                            render,
-                            "mars/pawn_albedo.png",
-                            Texture.WrapMode.CLAMP_TO_EDGE,
-                            Texture.ColorFormat.SRGB);
-          }
-          catch (IOException e) {
-            Log.e(TAG, "Failed to read a required asset file", e);
-            messageSnackbarHelper.showError(this, "Failed to read a required asset file: " + e);
-          }
-          planet=1;
-        }
       }
       for (HitResult hit : hitResultList) {
         // If any plane, Oriented Point, or Instant Placement Point was hit, create an anchor. [TBD]
