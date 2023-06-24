@@ -82,6 +82,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     ################################################*/
 
   int planet=0;
+  int fact=0;
   MediaPlayer player;
 
   /** <<< Variable that gets the simple name of the class for debugging purposes >>> */
@@ -225,7 +226,14 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
 
   public void play(View v){
     if(player==null){
-      player=MediaPlayer.create(this,R.raw.fact);
+      if(fact==0) {
+        player = MediaPlayer.create(this, R.raw.fact);
+        fact=1;
+      }
+      else {
+        player = MediaPlayer.create(this, R.raw.fact2);
+        fact=0;
+      }
       player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
