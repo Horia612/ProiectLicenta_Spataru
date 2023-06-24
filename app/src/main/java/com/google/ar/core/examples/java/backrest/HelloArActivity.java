@@ -7,6 +7,7 @@ package com.google.ar.core.examples.java.backrest;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.opengl.GLES30;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -81,6 +82,7 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
     ################################################*/
 
   int planet=0;
+  MediaPlayer player;
 
   /** <<< Variable that gets the simple name of the class for debugging purposes >>> */
   private static final String TAG = HelloArActivity.class.getSimpleName();
@@ -216,13 +218,46 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            PopupMenu popup = new PopupMenu(HelloArActivity.this, v);
-            /** <<< Sets the OnMenuItemClickListener for the PopupMenu object to the settingsMenuClick method in the current activity. >>> */
-            popup.setOnMenuItemClickListener(HelloArActivity.this::settingsMenuClick);
-            popup.inflate(R.menu.settings_menu);
-            popup.show();
+            play(v);
           }
         });
+  }
+
+  public void play(View v){
+    if(player==null){
+      player=MediaPlayer.create(this,R.raw.fact);
+      player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mediaPlayer) {
+          stopPlayer();
+        }
+      });
+    }
+    player.start();
+  }
+
+  public void pause(View v){
+    if(player!=null){
+      player.pause();
+    }
+  }
+
+  public void stop(View v){
+    stopPlayer();
+  }
+
+  private void stopPlayer(){
+    if(player!=null){
+      player.release();
+      player=null;
+      Toast.makeText(this,"MediaPlayer released",Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    stopPlayer();
   }
 
   /** <<< This method handles the selection of items in a popup menu, launching a specific dialog depending on the selected item >>> */
