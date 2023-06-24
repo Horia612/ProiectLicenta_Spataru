@@ -230,8 +230,17 @@ public class HelloArActivity extends AppCompatActivity implements SampleRender.R
         player = MediaPlayer.create(this, R.raw.fact);
         fact=1;
       }
-      else {
+      else if(fact==1) {
         player = MediaPlayer.create(this, R.raw.fact2);
+        fact=2;
+      }
+      else if(fact==2)
+      {
+        player = MediaPlayer.create(this, R.raw.fact3);
+        fact=3;
+      }
+      else{
+        player = MediaPlayer.create(this, R.raw.fact4);
         fact=0;
       }
       player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
